@@ -24,7 +24,7 @@ dist-ssr
 *.sln
 *.sw?
 
-# Archivos de entorno (No están ignorados pero podrían agregarse)
+# files env
 .env
 .env.local
 .env.production
