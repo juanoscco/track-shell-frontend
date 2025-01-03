@@ -1,0 +1,18 @@
+import React from "react";
+
+export const HomeAdminPage = React.lazy(() => import("./home/home-admin.page"))
+export const CreateSellerPage = React.lazy(() => import("./create-seller/create-seller.page"))
+export const SellersList = React.lazy(() => import("./view-sellers/view-sellers.page"))
+export const MaterialList = React.lazy(() => import("./view-materials/view-materials.page"))
+export const SalesList = React.lazy(() => import("./view-sale/view-sale.page"))
+export const OutputList = React.lazy(() => import("./view-output/view-output.page"))
+export const IncomeList = React.lazy(() => import("./view-income/view-income.page"))
+export const ClientList = React.lazy(() => import("./view-client/view-client.page"))
+export const CreateClientPage = React.lazy(() => import("./create-client/create-client.page"))
+export const CreateMaterialPage = React.lazy(() => import("./create-materials/create-materials.page"))
+export const CreateSalePage = React.lazy(() => import("./create-sales/create-sales.page"))
+export const CreateOutputPage = React.lazy(() => import("./create-outputs/create-output.page"))
+export const CreateIncomePage = React.lazy(() => import("./create-income/create-income.page"))
+export const DetailIncomePage = React.lazy(() => import("./detail-income/detail-income.page"))
+export const DetailOutputsPage = React.lazy(() => import("./detail-outputs/detail-outputs.page.tsx"))
+export const DetailSalesPage = React.lazy(() => import("./detail-sales/detail-sales.page.tsx"))
