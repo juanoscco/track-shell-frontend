@@ -14,6 +14,22 @@ interface SPH {
     value: string;
 }
 
+
+interface Bag {
+    id: number;
+    quantity: number;
+    sph: {
+        value: string;
+    };
+    cyl: {
+        value: string;
+    };
+}
+
+interface DataTableBagsProps {
+    bags: Bag[];
+}
+
 const fetchCylData = async (): Promise<Cyl[]> => {
     const response = await axiosInstance.get(`${API_URL}/api/cyl`);
     return response.data;
@@ -45,42 +61,25 @@ const fetchSPHData = async (type: string): Promise<SPH[]> => {
         return [];
     }
 };
-
-interface TabbedLensTableProps {
-    onValueChange: (values: Array<{ sphId: number; cylId: number; quantity: number }>) => void;
-}
-
-export function PrescriptionGrid({ onValueChange }: TabbedLensTableProps) {
+export function DataTableBags({ bags }: DataTableBagsProps) {
     const [cylRanges, setCylRanges] = useState<{ name: string; range: { id: number; value: string }[] }[]>([]);
     const [sphRange, setSphRange] = useState<{ id: number; value: string }[]>([]);
-    const [activeTab, setActiveTab] = useState("0.25 - 2.00")
-    const [isPositive, setIsPositive] = useState(false)
-    const [tableData, setTableData] = useState<{ [key: string]: number }>({})
+    const [activeTab, setActiveTab] = useState("0.25 - 2.00");
+    const [isPositive, setIsPositive] = useState(false);
+    const [tableData, setTableData] = useState<{ [key: string]: number }>({});
 
     useEffect(() => {
+        // Inicializamos `tableData` con base en los datos de las bolsas
         const initialData: { [key: string]: number } = {};
 
-        sphRange.forEach((sph) => {
-            cylRanges.forEach((cylRange) => {
-                cylRange.range.forEach((cyl) => {
-                    initialData[`${sph.id}-${cyl.id}`] = 0;
-                });
-            });
+        // Mapear bolsas a la estructura de datos de la tabla
+        bags.forEach((bag) => {
+            const key = `${bag.sph.value}-${bag.cyl.value}`;
+            initialData[key] = bag.quantity;
         });
 
         setTableData(initialData);
-    }, [sphRange, cylRanges]);
-
-    useEffect(() => {
-        const values = Object.entries(tableData).reduce((acc, [key, value]) => {
-            if (value && value > 0) {
-                const [sphId, cylId] = key.split("-").map(Number);
-                acc.push({ sphId, cylId, quantity: value });
-            }
-            return acc;
-        }, [] as Array<{ sphId: number; cylId: number; quantity: number }>);
-        onValueChange(values);
-    }, [tableData, onValueChange]);
+    }, [bags]);
 
     useEffect(() => {
         const fetchAndSetCylRanges = async () => {
@@ -115,19 +114,13 @@ export function PrescriptionGrid({ onValueChange }: TabbedLensTableProps) {
     useEffect(() => {
         const fetchAndSetSphRange = async () => {
             try {
-                // Determinamos el tipo basado en isPositive
                 const type = isPositive ? "positive" : "negative";
-
-                // Llamamos a la función con el tipo correspondiente
                 const data = await fetchSPHData(type);
-
-                // Mapeamos los datos al formato requerido por el estado
                 const range = data.map((sph: { id: number; value: string }) => ({
                     id: sph.id,
-                    value: String(sph.value), // Aseguramos que el valor sea un string
+                    value: String(sph.value),
                 }));
 
-                // Actualizamos el estado con el array de objetos en el formato correcto
                 setSphRange(range);
             } catch (error) {
                 console.error("Error fetching SPH data:", error);
@@ -137,19 +130,13 @@ export function PrescriptionGrid({ onValueChange }: TabbedLensTableProps) {
         fetchAndSetSphRange();
     }, [isPositive]);
 
-    const handleCellChange = (sphId: number, cylId: number, value: string) => {
-        setTableData((prev) => ({
-            ...prev,
-            [`${sphId}-${cylId}`]: parseInt(value, 10) || 0,
-        }));
-    };
-
     const getCellColor = (cylValue: string) => {
         const cylNum = parseFloat(cylValue);
         if (cylNum <= 2.0) return "bg-yellow-100";
         if (cylNum <= 4.0) return "bg-blue-100";
         return "bg-white";
     };
+
     const renderTable = (cylRange: { id: number; value: string }[]) => (
         <div className="overflow-x-auto">
             <table className="w-full border border-collapse">
@@ -166,12 +153,17 @@ export function PrescriptionGrid({ onValueChange }: TabbedLensTableProps) {
                                 <option value="positive">(+)</option>
                             </select>
                         </th>
-                        <th className="border p-2 text-sm text-gray-700" colSpan={8} >CYL</th>
+                        <th className="border p-2 text-sm text-gray-700" colSpan={8}>
+                            CYL
+                        </th>
                     </tr>
                     <tr>
                         <th className="sticky left-0 bg-gray-100 border border-r p-2"></th>
                         {cylRange.map((cyl) => (
-                            <th key={cyl.id} className={`border p-2 text-sm text-center  text-gray-600 w-16 ${getCellColor(cyl.value)}`}>
+                            <th
+                                key={cyl.id}
+                                className={`border p-2 text-sm text-center text-gray-600 w-16 ${getCellColor(cyl.value)}`}
+                            >
                                 {cyl.value}
                             </th>
                         ))}
@@ -184,13 +176,13 @@ export function PrescriptionGrid({ onValueChange }: TabbedLensTableProps) {
                                 {sph.value}
                             </td>
                             {cylRange.map((cyl) => (
-                                <td key={`${sph.id}-${cyl.id}`}
+                                <td
+                                    key={`${sph.id}-${cyl.id}`}
                                     className={`border p-0 text-center text-sm border-gray-300 ${getCellColor(cyl.value)}`}
                                 >
                                     <input
                                         type="text"
-                                        value={tableData[`${sph.id}-${cyl.id}`] || 0}
-                                        onChange={(e) => handleCellChange(sph.id, cyl.id, e.target.value)}
+                                        value={tableData[`${sph.value}-${cyl.value}`] || 0}
                                         className="w-full h-full text-center bg-transparent"
                                     />
                                 </td>

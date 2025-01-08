@@ -184,8 +184,8 @@ export function TableDataHome() {
     <div className="overflow-x-auto">
       <table className="w-full border border-collapse">
         <thead>
-          <tr className="bg-gray-200">
-            <th className="sticky left-0 bg-gray-200 border p-2 font-bold text-sm text-gray-700 w-20">
+          <tr className="">
+            <th className="sticky left-0  border p-2 font-bold text-sm bg-[#0080DAEB] text-white w-20">
               <label htmlFor="sign-select">SPH</label>
               <select
                 id="sign-select"
@@ -197,7 +197,7 @@ export function TableDataHome() {
                 <option value="positive">(+)</option>
               </select>
             </th>
-            <th colSpan={cylRange.length} className="border p-2 text-sm text-gray-700">
+            <th colSpan={cylRange.length} className="border p-2 text-sm bg-[#0080DAEB] text-white">
               CYL
             </th>
           </tr>
@@ -264,14 +264,22 @@ export function TableDataHome() {
       <Tabs defaultValue={activeTab} onValueChange={setActiveTab}>
         <TabsList className="w-full">
           {cylRanges.map((tab) => (
-            <TabsTrigger key={tab.name} value={tab.name} className="flex-1">
+            <TabsTrigger
+              key={tab.name}
+              value={tab.name}
+              className="flex-1 font-bold  rounded-sm"
+            >
               {tab.name}
             </TabsTrigger>
           ))}
         </TabsList>
 
         {cylRanges.map((tab) => (
-          <TabsContent key={tab.name} value={tab.name}>
+          <TabsContent
+            key={tab.name}
+            value={tab.name}
+            
+          >
             {renderTable(tab.range)}  {/* Aquí tab.range es un array de strings */}
           </TabsContent>
         ))}

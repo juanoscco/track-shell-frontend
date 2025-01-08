@@ -17,6 +17,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Link } from 'react-router';
+import { useDecodedToken } from "@/hooks/decoded-token/decoded-token.hooks"
+
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -55,6 +57,7 @@ interface IncomeResponse {
   totalPages: number;
   currentPage: number;
   currentPageSize: number;
+  user: number
 }
 
 const columns = [
@@ -134,10 +137,13 @@ export default function ListIncome() {
     initialPageSize: 10,
     initialPage: 1,
   });
+  const token = localStorage.getItem('token');
+
+  const { data: decodedToken } = useDecodedToken(token);
 
   const { data, error, isLoading } = useQuery<IncomeResponse, Error>({
     queryKey: ['incomes', page, pageSize, filter], // Usa pageSize en la queryKey para que se reactive correctamente
-    queryFn: () => getIncomes(page, pageSize, filter),
+    queryFn: () => getIncomes(page, pageSize, filter, decodedToken?.id),
   });
 
   // Asegúrate de incluir currentPageSize desde los datos de la API
@@ -175,12 +181,14 @@ export default function ListIncome() {
   )
 }
 
-const getIncomes = async (page: number = 1, limit: number = 10, search: string = ''): Promise<IncomeResponse> => {
+const getIncomes = async (page: number = 1, limit: number = 10, search: string = '', user: string = '1'): Promise<IncomeResponse> => {
+
   const response = await axiosInstance.get(`${API_URL}/api/records/income`, {
     params: {
       page,
       limit,
-      search
+      search,
+      user
     }
   });
 

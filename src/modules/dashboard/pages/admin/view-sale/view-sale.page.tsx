@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Link } from 'react-router';
+import { useDecodedToken } from "@/hooks/decoded-token/decoded-token.hooks"
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -40,10 +41,10 @@ interface SalesResponse {
 }
 
 const columns = [
-  {
-    header: "Encargado",
-    cell: ({ row }: { row: { original: Sales } }) => row.original.user.fullName,
-  },
+  // {
+  //   header: "Encargado",
+  //   cell: ({ row }: { row: { original: Sales } }) => row.original.user.fullName,
+  // },
   {
     header: "Cliente",
     cell: ({ row }: { row: { original: Sales } }) => row.original.client.fullName,
@@ -112,10 +113,12 @@ export default function SalesList() {
     initialPageSize: 10,
     initialPage: 1,
   });
+  const token = localStorage.getItem('token');
 
+  const { data: decodedToken } = useDecodedToken(token);
   const { data, error, isLoading } = useQuery<SalesResponse, Error>({
     queryKey: ['sales', page, pageSize, filter],
-    queryFn: () => getSales(page, pageSize, filter),
+    queryFn: () => getSales(page, pageSize, filter, decodedToken?.id),
   });
 
   const { records: sales, total, totalPages, currentPage } = data || {
@@ -151,12 +154,13 @@ export default function SalesList() {
   );
 }
 
-const getSales = async (page: number = 1, limit: number = 10, search: string = ''): Promise<SalesResponse> => {
+const getSales = async (page: number = 1, limit: number = 10, search: string = '', user: string = "1"): Promise<SalesResponse> => {
   const response = await axiosInstance.get(`${API_URL}/api/records/sale`, {
     params: {
       page,
       limit,
       search,
+      user
     },
   });
 

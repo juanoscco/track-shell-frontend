@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Link } from 'react-router';
+import { useDecodedToken } from "@/hooks/decoded-token/decoded-token.hooks"
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -40,10 +41,10 @@ interface OutputResponse {
 }
 
 const columns = [
-  {
-    header: "Encargado",
-    cell: ({ row }: { row: { original: Output } }) => row.original.user.fullName,
-  },
+  // {
+  //   header: "Encargado",
+  //   cell: ({ row }: { row: { original: Output } }) => row.original.user.fullName,
+  // },
   {
     header: "Cliente",
     cell: ({ row }: { row: { original: Output } }) => row.original.client.fullName,
@@ -90,7 +91,7 @@ const columns = [
               Ver detalles
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>Edit Output</DropdownMenuItem>
+            <DropdownMenuItem>Editar salida</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -112,10 +113,13 @@ export default function OutputList() {
     initialPageSize: 10,
     initialPage: 1,
   });
+  const token = localStorage.getItem('token');
+
+  const { data: decodedToken } = useDecodedToken(token);
 
   const { data, error, isLoading } = useQuery<OutputResponse, Error>({
     queryKey: ['outputs', page, pageSize, filter], // Usa pageSize y filter en la queryKey para actualizaciones
-    queryFn: () => getOutputs(page, pageSize, filter),
+    queryFn: () => getOutputs(page, pageSize, filter, decodedToken?.id),
   });
 
   const { records: outputs, total, totalPages, currentPage } = data || {
@@ -126,7 +130,7 @@ export default function OutputList() {
     currentPageSize: 10,
   };
 
-  console.log(outputs);
+  // console.log(outputs);
   if (isLoading) return <div>Cargando outputs...</div>;
   if (error) return <div>Error: {error.message}</div>;
 
@@ -152,12 +156,13 @@ export default function OutputList() {
   );
 }
 
-const getOutputs = async (page: number = 1, limit: number = 10, search: string = ''): Promise<OutputResponse> => {
+const getOutputs = async (page: number = 1, limit: number = 10, search: string = '', user:string = '1'): Promise<OutputResponse> => {
   const response = await axiosInstance.get(`${API_URL}/api/records/output`, {
     params: {
       page,
       limit,
       search,
+      user
     },
   });
 

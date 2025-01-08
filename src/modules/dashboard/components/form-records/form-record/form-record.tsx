@@ -226,7 +226,6 @@ export function FormRecords({ clientId, fullName, onBack, apiUrl, type }: Output
                             ) :
                             (
                                 <PrescriptionOtherGrid onValueChange={handlePrescriptionChange} category={selectedCategoryId} />
-                                // <div>building! {selectedCategoryId}</div>
                             )
                     }
                     {errors.bag && <p className="text-red-500">{errors.bag.message}</p>}

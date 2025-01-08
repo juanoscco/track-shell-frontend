@@ -192,11 +192,11 @@ export const dataSeller = {
             items: [
                 {
                     title: "Crear",
-                    url: "#",
+                    url: "/dashboard-seller/create-sales-seller",
                 },
                 {
                     title: "Lista",
-                    url: "#",
+                    url: "/dashboard-seller/view-sales-seller",
                 },
 
             ],

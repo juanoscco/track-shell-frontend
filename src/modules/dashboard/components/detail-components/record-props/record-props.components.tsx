@@ -1,8 +1,9 @@
-import { RecordDetail } from "../record-detail/record-detail.components"; 
+import { RecordDetail } from "../record-detail/record-detail.components";
 import axiosInstance from "@/store/interceptor/token-require.interceptor";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { DataTableBags } from "../data-table-bags";
+// import { ScrollArea } from "@/components/ui/scroll-area";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -36,7 +37,11 @@ const fetchRecordDetail = async (id: string): Promise<RecordDetail> => {
   return data;
 };
 
+
+
 export function DetailPropsPage({ id }: { id: string }) {
+
+
   return (
     <RecordDetail<RecordDetail>
       id={id}
@@ -95,7 +100,7 @@ export function DetailPropsPage({ id }: { id: string }) {
                 <Badge variant="secondary">{data.category.name}</Badge>
               </div>
             </div>
-            <div className="mt-6">
+            {/* <div className="mt-6">
               <h3 className="text-lg font-semibold mb-2">Bolsas</h3>
               <ScrollArea className="h-[200px] w-full rounded-md border p-4">
                 <div className="space-y-4">
@@ -116,7 +121,11 @@ export function DetailPropsPage({ id }: { id: string }) {
                   ))}
                 </div>
               </ScrollArea>
-            </div>
+            </div> */}
+
+            <DataTableBags bags={data.bags} />
+
+              
           </CardContent>
         </Card>
       )}
