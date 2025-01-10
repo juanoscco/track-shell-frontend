@@ -115,7 +115,7 @@ const columns = [
                 Ver Detalles
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>Editar Ingreso</DropdownMenuItem>
+            {/* <DropdownMenuItem>Editar Ingreso</DropdownMenuItem> */}
           </DropdownMenuContent>
         </DropdownMenu>
       );

@@ -26,10 +26,13 @@ interface Sales {
   quantity: number;
   user: {
     fullName: string;
-  },
+  };
   client: {
     fullName: string;
-  }
+  };
+  category: {
+    name: string;
+  };
 }
 
 interface SalesResponse {
@@ -48,6 +51,10 @@ const columns = [
   {
     header: "Cliente",
     cell: ({ row }: { row: { original: Sales } }) => row.original.client.fullName,
+  },
+  {
+    header: "Material",
+    cell: ({ row }: { row: { original: Sales } }) => row.original.category.name,
   },
   {
     header: "Total de cantidad",
@@ -91,7 +98,7 @@ const columns = [
                 Ver Detalles
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>Editar venta</DropdownMenuItem>
+            {/* <DropdownMenuItem>Editar venta</DropdownMenuItem> */}
           </DropdownMenuContent>
         </DropdownMenu>
       );

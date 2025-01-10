@@ -14,6 +14,7 @@ import axiosInstance from "@/store/interceptor/token-require.interceptor";
 import { useQuery } from '@tanstack/react-query';
 import { PrescriptionGrid } from "../prescription-grid/";
 import { PrescriptionOtherGrid } from "../prescription-other-grid";
+import { PrescriptionSalesGrid } from "../prescription-sales-grid";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -33,35 +34,33 @@ interface CategoryResponse {
 
 // Esquema de validación con Zod
 const outputSchema = z.object({
-    date: z.string().nonempty("La fecha es obligatoria"),
-    categoryId: z.number(),
+    date: z.string(),
+    categoryId: z.number(), // Ahora es una cadena, ya que el ID de la categoría es un UUID
     bag: z.array(
         z.object({
             sphId: z
-                .number()
-                .min(-100, "SPH mínimo es -100")
-                .max(100, "SPH máximo es 100")
-                .refine(
-                    (value) =>
-                        Number.isFinite(value) && Math.round(value * 100) / 100 === value,
-                    { message: "SPH debe tener hasta dos decimales" }
-                ),
+                .number() // Asegúrate de que el sphId sea una cadena
+                .min(1, "SPH debe ser un identificador válido"),
             cylId: z
-                .number()
-                .min(-200, "CYL mínimo es -200")
-                .max(200, "CYL máximo es 200")
-                .refine(
-                    (value) =>
-                        Number.isFinite(value) && Math.round(value * 100) / 100 === value,
-                    { message: "CYL debe tener hasta dos decimales" }
-                ),
+                .number() // Asegúrate de que el cylId sea una cadena
+                .min(1, "CYL debe ser un identificador válido"),
             quantity: z.number().min(1, "La cantidad debe ser al menos 1"),
+            unitPrice: z
+                .number()
+                .optional()
+                .default(0), // Si no se proporciona, se establece en 0
         })
     ),
-    clientId: z.number(),
+    clientId: z.number(), // Ahora el clientId es un UUID (cadena)
     quantity: z.number(),
-    userId: z.number(),
+    userId: z.number(), // Ahora el userId es un UUID (cadena)
+    type: z.enum(["sale", "purchase"]).default("sale"), // Definimos el tipo como opcional con un valor predeterminado
+    totalPrice: z
+        .number()
+        .optional()
+        .default(0), // Si no se envía, se establece en 0
 });
+
 
 interface OutputProps {
     clientId: number;
@@ -89,6 +88,15 @@ export function FormRecords({ clientId, fullName, onBack, apiUrl, type }: Output
 
     const { categories = [] } = data || {};
 
+    const date = new Date();
+    const peruTimezoneOffset = -5; // Lima, Perú está en UTC-5
+
+    // Ajustar al huso horario de Perú
+    const peruDate = new Date(date.getTime() + peruTimezoneOffset * 60 * 60 * 1000);
+
+    // Formatear la fecha en formato ISO sin segundos
+    const formattedDateTime = peruDate.toISOString().slice(0, 16);
+
     // 
     const {
         control,
@@ -100,12 +108,13 @@ export function FormRecords({ clientId, fullName, onBack, apiUrl, type }: Output
     } = useForm<z.infer<typeof outputSchema>>({
         resolver: zodResolver(outputSchema),
         defaultValues: {
-            date: "",
+            date: formattedDateTime,
             categoryId: 1,
-            bag: [],
+            bag: [], // Array de objetos con la información de las bolsas
             clientId,
             quantity: 0,
             userId,
+            totalPrice: 0, // Valor predeterminado para totalPrice
         },
     });
 
@@ -116,17 +125,31 @@ export function FormRecords({ clientId, fullName, onBack, apiUrl, type }: Output
     );
 
     const handlePrescriptionChange = useCallback(
-        (values: Array<{ sphId: number; cylId: number; quantity: number }>) => {
+        (values: Array<{ sphId: number; cylId: number; quantity: number; unitPrice?: number }>) => {
+            // Calcular el totalPrice basado en los valores de bag
+            const calculatedTotalPrice = values.reduce((total, item) => {
+                const unitPrice = item.unitPrice || 0; // Si no se proporciona unitPrice, asignar 0
+                return total + (unitPrice * item.quantity); // Sumar el totalPrice para cada item
+            }, 0);
+
             // Convertir a enteros y renombrar los campos para que coincidan con el esquema esperado
-            const integerValues = values.map(item => ({
-                sphId: Math.round(item.sphId),   // Renombrar sphId a sphId
-                cylId: Math.round(item.cylId),   // Renombrar cylId a cylId
-                quantity: Math.floor(item.quantity), // Asegurarte de que quantity sea un entero
-            }));
-        
+            const integerValues = values.map(item => {
+                const unitPrice = item.unitPrice || 0;  // Si no se proporciona unitPrice, asignar 0
+                const totalPrice = unitPrice * item.quantity; // Calcular el totalPrice para este item
+
+                return {
+                    sphId: Math.round(item.sphId),   // Renombrar sphId a sphId
+                    cylId: Math.round(item.cylId),   // Renombrar cylId a cylId
+                    quantity: Math.floor(item.quantity), // Asegurarte de que quantity sea un entero
+                    unitPrice: unitPrice,   // Asignar el unitPrice si está presente, de lo contrario 0
+                    totalPrice: totalPrice, // Calcular el totalPrice si unitPrice está presente
+                };
+            });
+
             // Actualizar los valores del formulario solo si son diferentes
             if (JSON.stringify(integerValues) !== JSON.stringify(bag)) {
                 setValue("bag", integerValues, { shouldValidate: true });
+                setValue("totalPrice", calculatedTotalPrice, { shouldValidate: true }); // Establecer totalPrice calculado
             }
         },
         [bag, setValue]
@@ -220,13 +243,13 @@ export function FormRecords({ clientId, fullName, onBack, apiUrl, type }: Output
                         </div>
                     </div>
                     {
-                        type === "income" ?
-                            (
-                                <PrescriptionGrid onValueChange={handlePrescriptionChange} />
-                            ) :
-                            (
-                                <PrescriptionOtherGrid onValueChange={handlePrescriptionChange} category={selectedCategoryId} />
-                            )
+                        type === "income" ? (
+                            <PrescriptionGrid onValueChange={handlePrescriptionChange} />
+                        ) : type === "sales" ? (
+                            <PrescriptionSalesGrid onValueChange={handlePrescriptionChange} category={selectedCategoryId} />
+                        ) : (
+                            <PrescriptionOtherGrid onValueChange={handlePrescriptionChange} category={selectedCategoryId} />
+                        )
                     }
                     {errors.bag && <p className="text-red-500">{errors.bag.message}</p>}
                 </CardContent>

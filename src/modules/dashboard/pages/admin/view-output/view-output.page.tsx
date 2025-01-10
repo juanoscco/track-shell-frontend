@@ -21,7 +21,7 @@ import { useDecodedToken } from "@/hooks/decoded-token/decoded-token.hooks"
 const API_URL = import.meta.env.VITE_API_URL;
 
 interface Output {
-  id:string;
+  id: string;
   date: string;
   quantity: number;
   user: {
@@ -30,6 +30,9 @@ interface Output {
   client: {
     fullName: string;
   };
+  category: {
+    name: string;
+  }
 }
 
 interface OutputResponse {
@@ -48,6 +51,10 @@ const columns = [
   {
     header: "Cliente",
     cell: ({ row }: { row: { original: Output } }) => row.original.client.fullName,
+  },
+  {
+    header: "Material",
+    cell: ({ row }: { row: { original: Output } }) => row.original.category.name,
   },
   {
     header: "Cantidad",
@@ -88,10 +95,10 @@ const columns = [
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <Link to={`/dashboard-admin/view-output/${row.original.id}`}>
-              Ver detalles
+                Ver detalles
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>Editar salida</DropdownMenuItem>
+            {/* <DropdownMenuItem>Editar salida</DropdownMenuItem> */}
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -156,7 +163,7 @@ export default function OutputList() {
   );
 }
 
-const getOutputs = async (page: number = 1, limit: number = 10, search: string = '', user:string = '1'): Promise<OutputResponse> => {
+const getOutputs = async (page: number = 1, limit: number = 10, search: string = '', user: string = '1'): Promise<OutputResponse> => {
   const response = await axiosInstance.get(`${API_URL}/api/records/output`, {
     params: {
       page,
