@@ -2,6 +2,11 @@ import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import axiosInstance from "@/store/interceptor/token-require.interceptor";
 
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+// import { Checkbox } from "@/components/ui/checkbox"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { ScrollArea } from "@/components/ui/scroll-area";
 const API_URL = import.meta.env.VITE_API_URL;
 
 interface Bag {
@@ -311,9 +316,11 @@ export function PrescriptionSalesGrid({ onValueChange, category }: TabbedLensTab
     // console.log(newTableData);
     return (
         <div className="w-full bg-white rounded-lg overflow-hidden">
-            <div className="pb-3 flex items-center">
-
-                <div className="flex flex-wrap">
+            <div className="font-semibold text-lg">Cantidad Disponible: {totalQuantity}</div>
+            
+            <div className="pb-3">
+           
+                <ScrollArea className="flex-col h-[200px] md:h-[300px]">
                     {/* Render entries from newTableData */}
                     {Object.entries(newTableData).map(([key, value]) => {
                         const totalPrice = value.quantity * (unitPrices[key] || value.unitPrice || 0); // Obtiene el precio por unidad individual para cada objeto
@@ -336,20 +343,73 @@ export function PrescriptionSalesGrid({ onValueChange, category }: TabbedLensTab
 
 
                         return (
-                            <div key={key} className="m-2 p-4 border rounded-lg shadow-md bg-gray-100">
-                                <div>
-                                    <strong>Esfera:</strong> {value.sph.name}
-                                </div>
-                                <div>
-                                    <strong>Cilindro:</strong> {value.cyl.name}
-                                </div>
-                                <div>
-                                    <strong>Cantidad:</strong> {value.quantity}
-                                </div>
+                            // <div key={key} className="m-2 p-4 border rounded-lg shadow-md bg-gray-100">
+                            //     <div>
+                            //         <strong>Esfera:</strong> {value.sph.name}
+                            //     </div>
+                            //     <div>
+                            //         <strong>Cilindro:</strong> {value.cyl.name}
+                            //     </div>
+                            //     <div>
+                            //         <strong>Cantidad:</strong> {value.quantity}
+                            //     </div>
 
-                                {/* Checkbox para activar bonificación */}
-                                <div className="mt-2">
-                                    <label>
+                            //     {/* Checkbox para activar bonificación */}
+                            //     <div className="mt-2">
+                            //         <label>
+                            //             <input
+                            //                 type="checkbox"
+                            //                 checked={bonifications[key] || false} // Usa el valor del estado o false si no está definido
+                            //                 onChange={(e) => handleBonificationChange(key, e)}
+
+                            //                 className="mr-2"
+                            //             />
+                            //             Bonificación
+                            //         </label>
+                            //     </div>
+
+
+                            //     {/* Input para el precio por unidad */}
+                            //     <div className="mt-4">
+                            //         <input
+                            //             type="number"
+                            //             step="0.01" // Permitir decimales
+                            //             value={value.unitPrice || ""} // Mostrar el valor actual o cadena vacía
+                            //             onChange={(e) => handleUnitPriceChange(key, e)} // Llama a la función en cambios
+                            //             className="p-2 border rounded"
+                            //             placeholder="Precio por unidad"
+                            //             disabled={bonifications[key] || false} // Deshabilitar si tiene bonificación activa
+                            //         />
+                            //     </div>
+
+                            //     {/* Mostrar el precio total */}
+                            //     <div>
+                            //         <strong>Total Precio:</strong>
+                            //         {bonifications[key] ? "Bonificado" : `$${totalPrice.toFixed(2)}`}
+                            //     </div>
+                            // </div>
+
+                            <Card key={key} className="m-1 shadow-none flex flex-col p-0">
+                                <CardHeader className="px-3 pb-0 pt-2">
+                                    <CardTitle className="text-lg">Producto </CardTitle>
+                                </CardHeader>
+                                <CardContent className="space-y-4 p-4">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <Label htmlFor="sphere">Esfera</Label>
+                                            <div id="sphere" className="font-medium">{value.sph.name}</div>
+                                        </div>
+                                        <div>
+                                            <Label htmlFor="cylinder">Cilindro</Label>
+                                            <div id="cylinder" className="font-medium">{value.cyl.name}</div>
+                                        </div>
+                                        <div>
+                                            <Label htmlFor="quantity">Cantidad</Label>
+                                            <div id="quantity" className="font-medium">{value.quantity}</div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center space-x-2">
                                         <input
                                             type="checkbox"
                                             checked={bonifications[key] || false} // Usa el valor del estado o false si no está definido
@@ -357,36 +417,38 @@ export function PrescriptionSalesGrid({ onValueChange, category }: TabbedLensTab
 
                                             className="mr-2"
                                         />
-                                        Bonificación
-                                    </label>
-                                </div>
+                                        <Label htmlFor={`bonification-${key}`}>Bonificación</Label>
+                                    </div>
+
+                                    <div>
+                                        <Label htmlFor={`unitPrice-${key}`}>Precio por unidad</Label>
+                                        <Input
+                                            id={`unitPrice-${key}`}
+                                            type="number"
+                                            step="0.01"
+                                            value={value.unitPrice || ""}
+                                            onChange={(e) => handleUnitPriceChange(key, e)}
+                                            placeholder="Precio por unidad"
+                                            disabled={bonifications[key] || false}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <Label>Total Precio</Label>
+                                        <div className="font-medium">
+                                            {bonifications[key] ? "Bonificado" : `$${totalPrice.toFixed(2)}`}
+                                        </div>
+                                    </div>
+                                </CardContent>
+
+                            </Card>
 
 
-                                {/* Input para el precio por unidad */}
-                                <div className="mt-4">
-                                    <input
-                                        type="number"
-                                        step="0.01" // Permitir decimales
-                                        value={value.unitPrice || ""} // Mostrar el valor actual o cadena vacía
-                                        onChange={(e) => handleUnitPriceChange(key, e)} // Llama a la función en cambios
-                                        className="p-2 border rounded"
-                                        placeholder="Precio por unidad"
-                                        disabled={bonifications[key] || false} // Deshabilitar si tiene bonificación activa
-                                    />
-                                </div>
-
-                                {/* Mostrar el precio total */}
-                                <div>
-                                    <strong>Total Precio:</strong>
-                                    {bonifications[key] ? "Bonificado" : `$${totalPrice.toFixed(2)}`}
-                                </div>
-                            </div>
                         );
                     })}
-                </div>
+                </ScrollArea>
 
 
-                <div className="font-semibold text-lg">Cantidad Disponible: {totalQuantity}</div>
             </div>
             <Tabs defaultValue={activeTab} onValueChange={setActiveTab}>
                 <TabsList className="w-full">
