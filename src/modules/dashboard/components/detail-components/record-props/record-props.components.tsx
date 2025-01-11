@@ -3,7 +3,7 @@ import axiosInstance from "@/store/interceptor/token-require.interceptor";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DataTableBags } from "../data-table-bags";
-// import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -12,6 +12,7 @@ interface RecordDetail {
   date: string;
   type: string;
   quantity: number;
+  totalPrice: string;
   user: {
     fullName: string;
     email: string;
@@ -29,6 +30,7 @@ interface RecordDetail {
     quantity: number;
     sph: { value: string };
     cyl: { value: string };
+    unitPrice: string
   }[];
 }
 
@@ -99,33 +101,49 @@ export function DetailPropsPage({ id }: { id: string }) {
                 <h3 className="text-lg font-semibold mb-2">Categoría</h3>
                 <Badge variant="secondary">{data.category.name}</Badge>
               </div>
+              {
+                data.totalPrice && (
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">Precio total</h3>
+                    <span className="font-medium">S/. {data.totalPrice}</span>
+                  </div>
+                )
+              }
             </div>
-            {/* <div className="mt-6">
-              <h3 className="text-lg font-semibold mb-2">Bolsas</h3>
-              <ScrollArea className="h-[200px] w-full rounded-md border p-4">
-                <div className="space-y-4">
-                  {data.bags.map((bag) => (
-                    <Card key={bag.id}>
-                      <CardContent className="p-4">
-                        <div className="flex justify-between items-center">
-                          <div className="text-right">
-                            <p>SPH: {bag.sph.value}</p>
-                            <p>CYL: {bag.cyl.value}</p>
-                          </div>
-                          <div>
-                            <p>Cantidad: {bag.quantity}</p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
+
+            {
+              data.totalPrice !== null && (
+                <div className="mt-2">
+                  <h3 className="text-lg font-semibold mb-2">Precios</h3>
+
+                  <ScrollArea className="h-[200px] w-full rounded-md border p-4">
+                    <div className="space-y-4">
+                      {data.bags.map((bag) => (
+                        <Card key={bag.id}>
+                          <CardContent className="p-4">
+                            <div className="flex justify-between items-center">
+                              <div className="text-right">
+                                <p>SPH: {bag.sph.value}</p>
+                                <p>CYL: {bag.cyl.value}</p>
+                              </div>
+                              <div>
+                                <p>Cantidad: {bag.quantity}</p>
+                                <p>Precio: {bag.unitPrice} </p>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </ScrollArea>
                 </div>
-              </ScrollArea>
-            </div> */}
+              )
+            }
+
 
             <DataTableBags bags={data.bags} />
 
-              
+
           </CardContent>
         </Card>
       )}

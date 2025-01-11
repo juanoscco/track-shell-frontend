@@ -138,7 +138,7 @@ export function DataTableBags({ bags }: DataTableBagsProps) {
     };
 
     const renderTable = (cylRange: { id: number; value: string }[]) => (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto mt-2">
             <table className="w-full border border-collapse">
                 <thead>
                     <tr className="bg-gray-200">
@@ -195,7 +195,8 @@ export function DataTableBags({ bags }: DataTableBagsProps) {
     );
 
     return (
-        <div className="w-full bg-white rounded-lg overflow-hidden">
+        <div className="w-full bg-white rounded-lg overflow-hidden mt-6">
+            <h2 className="font-semibold text-xl">Tabla</h2>
             <Tabs defaultValue={activeTab} onValueChange={setActiveTab}>
                 <TabsList className="w-full">
                     {cylRanges.map((tab) => (
