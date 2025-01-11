@@ -234,7 +234,7 @@ export function TableDataHome() {
   );
 
   return (
-    <div className="w-full bg-white rounded-lg overflow-hidden">
+    <div className="w-full bg-white rounded-lg overflow-hidden p-2">
       <div className="p-4 flex items-center gap-3 justify-between">
         <div className="flex items-center gap-2">
           <label htmlFor="category-select" className="block font-bold text-sm">

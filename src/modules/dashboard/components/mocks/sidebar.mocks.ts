@@ -11,7 +11,8 @@ import {
     SquareTerminal,
     SquareChartGantt,
     Weight
-} from "lucide-react"
+} from "lucide-react";
+
 export const dataAdmin = {
     navMain: [
         {
@@ -201,6 +202,6 @@ export const dataSeller = {
 
             ],
         },
-        
+
     ]
 }
