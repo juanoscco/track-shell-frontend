@@ -109,7 +109,8 @@ const SellersList = () => {
     if (error) return <div>Error: {error.message}</div>;
 
     return (
-        <div className='mt-10'>
+        <div className='flex flex-col gap-5 p-6'>
+            <h1 className='text-2xl font-bold'>Vendedores</h1>
             <DataTable<Seller>
                 columns={columns}
                 data={sellers}

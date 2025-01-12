@@ -42,7 +42,7 @@ export function RecordDetail<T>({
 
     if (isError) {
         return (
-            <div className="container mx-auto p-4">
+            <div className="">
                 <Alert variant="destructive">
                     <AlertCircle className="h-4 w-4" />
                     <AlertTitle>Error</AlertTitle>
@@ -52,5 +52,5 @@ export function RecordDetail<T>({
         );
     }
 
-    return <div className="container mx-auto p-4">{renderDetails(data!)}</div>;
+    return <div className="">{renderDetails(data!)}</div>;
 }

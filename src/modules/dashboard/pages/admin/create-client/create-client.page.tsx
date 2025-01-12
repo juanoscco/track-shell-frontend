@@ -61,7 +61,7 @@ export default function CreateClientPage() {
     return (
         <Card className="shadow-none border-none">
             <CardHeader>
-                <CardTitle>Crear Nuevo Cliente</CardTitle>
+                <CardTitle className="text-2xl font-bold">Crear Nuevo Cliente</CardTitle>
                 <CardDescription>Ingresa los detalles del nuevo cliente</CardDescription>
             </CardHeader>
             <Form {...form}>

@@ -53,93 +53,93 @@ export function DetailPropsPage({ id }: { id: string }) {
           <CardHeader>
             <CardTitle className="text-2xl font-bold">Detalles del Registro</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Información General</h3>
-                <div className="space-y-2">
-                  <p>
-                    <span className="font-medium">ID del Registro:</span> {data.id}
-                  </p>
-                  <p>
-                    <span className="font-medium">Tipo:</span> {data.type}
-                  </p>
-                  <p>
-                    <span className="font-medium">Cantidad:</span> {data.quantity}
-                  </p>
-                  <p>
-                    <span className="font-medium">Fecha:</span> {data.date}
-                  </p>
+          <CardContent >
+            <div>
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">Información General</h3>
+                  <div className="space-y-2">
+                    <p>
+                      <span className="font-medium">ID del Registro:</span> {data.id}
+                    </p>
+                    <p>
+                      <span className="font-medium">Tipo:</span> {data.type}
+                    </p>
+                    <p>
+                      <span className="font-medium">Cantidad:</span> {data.quantity}
+                    </p>
+                    <p>
+                      <span className="font-medium">Fecha:</span> {data.date}
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Información del Usuario</h3>
-                <div className="space-y-2">
-                  <p>
-                    <span className="font-medium">Nombre:</span> {data.user.fullName}
-                  </p>
-                  <p>
-                    <span className="font-medium">Correo Electrónico:</span> {data.user.email}
-                  </p>
-                  <p>
-                    <span className="font-medium">Rol:</span> {data.user.role}
-                  </p>
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">Información del Usuario</h3>
+                  <div className="space-y-2">
+                    <p>
+                      <span className="font-medium">Nombre:</span> {data.user.fullName}
+                    </p>
+                    <p>
+                      <span className="font-medium">Correo Electrónico:</span> {data.user.email}
+                    </p>
+                    <p>
+                      <span className="font-medium">Rol:</span> {data.user.role}
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Información del Cliente</h3>
-                <div className="space-y-2">
-                  <p>
-                    <span className="font-medium">Nombre:</span> {data.client.fullName}
-                  </p>
-                  <p>
-                    <span className="font-medium">Dirección:</span> {data.client.address}
-                  </p>
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">Información del Cliente</h3>
+                  <div className="space-y-2">
+                    <p>
+                      <span className="font-medium">Nombre:</span> {data.client.fullName}
+                    </p>
+                    <p>
+                      <span className="font-medium">Dirección:</span> {data.client.address}
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Categoría</h3>
-                <Badge variant="secondary">{data.category.name}</Badge>
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">Categoría</h3>
+                  <Badge variant="secondary">{data.category.name}</Badge>
+                </div>
+                {
+                  data.totalPrice && (
+                    <div>
+                      <h3 className="text-lg font-semibold mb-2">Precio total</h3>
+                      <span className="font-medium">S/. {data.totalPrice}</span>
+                    </div>
+                  )
+                }
               </div>
               {
-                data.totalPrice && (
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">Precio total</h3>
-                    <span className="font-medium">S/. {data.totalPrice}</span>
+                data.totalPrice !== null && (
+                  <div className="">
+                    <h3 className="text-lg font-semibold mb-2">Precios</h3>
+
+                    <ScrollArea className="h-[200px] w-full rounded-md border p-4">
+                      <div className="space-y-4">
+                        {data.bags.map((bag) => (
+                          <Card key={bag.id}>
+                            <CardContent className="p-4">
+                              <div className="flex justify-between items-center">
+                                <div className="text-right">
+                                  <p>SPH: {bag.sph.value}</p>
+                                  <p>CYL: {bag.cyl.value}</p>
+                                </div>
+                                <div>
+                                  <p>Cantidad: {bag.quantity}</p>
+                                  <p>Precio: {bag.unitPrice} </p>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    </ScrollArea>
                   </div>
                 )
               }
             </div>
-
-            {
-              data.totalPrice !== null && (
-                <div className="mt-2">
-                  <h3 className="text-lg font-semibold mb-2">Precios</h3>
-
-                  <ScrollArea className="h-[200px] w-full rounded-md border p-4">
-                    <div className="space-y-4">
-                      {data.bags.map((bag) => (
-                        <Card key={bag.id}>
-                          <CardContent className="p-4">
-                            <div className="flex justify-between items-center">
-                              <div className="text-right">
-                                <p>SPH: {bag.sph.value}</p>
-                                <p>CYL: {bag.cyl.value}</p>
-                              </div>
-                              <div>
-                                <p>Cantidad: {bag.quantity}</p>
-                                <p>Precio: {bag.unitPrice} </p>
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  </ScrollArea>
-                </div>
-              )
-            }
-
 
             <DataTableBags bags={data.bags} />
 

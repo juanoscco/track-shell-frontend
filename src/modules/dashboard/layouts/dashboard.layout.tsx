@@ -60,7 +60,7 @@ export function DashboardLayout() {
                                     return (
                                         <React.Fragment key={index}>
                                             {/* Mostrar un separador antes de cada item (excepto el primero) */}
-                                            {index > 0 && <BreadcrumbSeparator className="" />}
+                                            {index > 0 && <BreadcrumbSeparator />}
                                             <BreadcrumbItem>
                                                 {isLast ? (
                                                     <BreadcrumbPage className="capitalize">

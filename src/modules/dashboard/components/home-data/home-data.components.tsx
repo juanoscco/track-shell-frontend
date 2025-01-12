@@ -236,8 +236,8 @@ export function TableDataHome() {
   return (
     <div className="w-full bg-white rounded-lg overflow-hidden p-2">
       <div className="p-4 flex items-center gap-3 justify-between">
-        <div className="flex items-center gap-2">
-          <label htmlFor="category-select" className="block font-bold text-sm">
+        <div className="flex items-center gap-2 flex-wrap">
+          <label htmlFor="category-select" className="block font-bold">
             Materiales:
           </label>
           <Select value={categoryId} onValueChange={setCategoryId}>
@@ -259,7 +259,7 @@ export function TableDataHome() {
             </SelectContent>
           </Select>
         </div>
-        <div className="mt-4 font-bold text-lg">Total: {totalQuantity}</div>
+        <div className="font-bold text-lg">Total: {totalQuantity}</div>
       </div>
       <Tabs defaultValue={activeTab} onValueChange={setActiveTab}>
         <TabsList className="w-full">

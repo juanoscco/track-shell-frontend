@@ -21,7 +21,7 @@ function Spinner({ size = "md", className, ...props }: SpinnerProps) {
   return (
     <div
       role="status"
-      className={cn("flex items-center justify-center", className)}
+      className={cn("flex items-center justify-center min-h-screen", className)}
       {...props}
     >
       <Loader2

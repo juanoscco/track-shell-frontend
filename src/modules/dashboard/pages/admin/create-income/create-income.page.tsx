@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Clients, FormRecords, TableClients } from "@/modules/dashboard/components/form-records"
-import { Button } from '@/components/ui/button';
+// import { Button } from '@/components/ui/button';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 
 interface Client {
   id: number;
@@ -11,7 +12,7 @@ const apiUrl = `${import.meta.env.VITE_API_URL}/api/records/income`;
 
 export default function CreateIncomePage() {
   const [client, setClient] = useState<Client | null>(null);
-  const [activeTab, setActiveTab] = useState(1);
+  // const [activeTab, setActiveTab] = useState(1);
 
   // Función para manejar la selección del cliente
   const handleSelectClient = (id: number, fullName: string) => {
@@ -22,45 +23,31 @@ export default function CreateIncomePage() {
     setClient(null); // Regresar a la selección del cliente
   };
   return (
-    <div>
-      <h1 className="text-2xl font-bold px-3 pl-2">Crear ingreso</h1>
-
+    <>
       {client === null ? (
-        <>
-          <div className="flex border-b">
-            <Button
-              className={`p-4 ${activeTab === 1 ? 'text-gray-500 border-b-2 border-gray-500' : 'text-gray-500'} bg-white shadow-none rounded-none`}
-              onClick={() => setActiveTab(1)}
-            >
-              Crear
-            </Button>
-            <Button
-              className={`p-4 ${activeTab === 2 ? 'text-gray-500 border-b-2 border-gray-500' : 'text-gray-500'} bg-white shadow-none rounded-none`}
-              onClick={() => setActiveTab(2)}
-            >
-              Buscar
-            </Button>
-          </div>
-          {
-            activeTab === 1 && (
+        <div className="p-4 flex flex-col gap-4">
+          <h1 className="text-2xl font-bold px-3">Crear entrada</h1>
+          <Tabs defaultValue="create" className="w-full ">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="create">Crear</TabsTrigger>
+              <TabsTrigger value="search">Buscar</TabsTrigger>
+            </TabsList>
+            <TabsContent value="create">
               <Clients
                 onClientCreated={(id: number, fullName: string) =>
                   setClient({ id, fullName })
                 }
               />
-            )
-          }
-          {
-            activeTab === 2 && (
+            </TabsContent>
+            <TabsContent value="search">
               <TableClients onClientCreated={handleSelectClient} />
-            )
-          }
-
-        </>
+            </TabsContent>
+          </Tabs>
+        </div>
 
       ) : (
-        <FormRecords clientId={client.id} fullName={client.fullName} onBack={handleBack} apiUrl={apiUrl}  type="income"/>
+        <FormRecords clientId={client.id} fullName={client.fullName} onBack={handleBack} apiUrl={apiUrl} type="income" />
       )}
-    </div>
+    </>
   )
 }
